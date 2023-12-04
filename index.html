@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+        
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #canvas1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to top right, #1C1262, #5A17D8);
+        }
+
+        #canvas2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            gap: 0px;
+            position: relative;
+            padding: 0 0px;
+            background-image: linear-gradient(to top right, #050319, #0099ff); /* Couleur 1 (dégradé) */
+    transition: background 1s ease-in-out; /* Transition de la propriété background */
+}
+        #canvas2 .switch {
+ --button-width: 3.5em;
+ --button-height: 2em;
+ --toggle-diameter: 1.5em;
+ --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+ --toggle-shadow-offset: 10px;
+ --toggle-wider: 3em;
+ --color-grey: #cccccc;
+ --color-green: #4296f4;
+}
+
+.slider {
+ display: inline-block;
+ width: var(--button-width);
+ height: var(--button-height);
+ background-color: var(--color-grey);
+ border-radius: calc(var(--button-height) / 2);
+ position: relative;
+ transition: 0.3s all ease-in-out;
+ cursor: pointer;
+}
+
+.slider::after {
+ content: "";
+ display: inline-block;
+ width: var(--toggle-diameter);
+ height: var(--toggle-diameter);
+ background-color: #fff;
+ border-radius: calc(var(--toggle-diameter) / 2);
+ position: absolute;
+ top: var(--button-toggle-offset);
+ transform: translateX(var(--button-toggle-offset));
+ box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+ transition: 0.3s all ease-in-out;
+}
+
+.switch input[type="checkbox"]:checked + .slider {
+ background-color: var(--color-green);
+}
+
+.switch input[type="checkbox"]:checked + .slider::after {
+ transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+ box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+}
+
+.switch input[type="checkbox"] {
+ display: none;
+}
+
+.switch input[type="checkbox"]:active + .slider::after {
+ width: var(--toggle-wider);
+}
+
+.switch input[type="checkbox"]:checked:active + .slider::after {
+ transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+}
+
+
+
+
+        .text {
+            font-family: 'Open Sans Light', sans-serif;
+            text-transform: uppercase;
+            font-weight: normal;
+            color: #ffffff;
+            margin-left: 10%;
+            font-size: 6vw;
+            opacity: 0;
+            transform: translateX(-100%);
+            will-change: transform, opacity;
+            animation: fadeInMoveLeft 2s ease-in-out forwards;
+            animation-delay: 4.5s;
+        }
+
+        .img-principale {
+            max-width: 60%;
+            height: auto;
+            max-height: 50vh;
+            margin-right: 10%;
+            position: relative;
+            opacity: 0;
+            will-change: transform, opacity;
+            animation: fadeInUp 2s ease-in-out forwards, slideUp 3s ease-in-out forwards;
+            animation-delay: 3s;
+        }
+
+
+        img {
+            width: auto;
+            height: auto;
+            margin-left: auto;
+            position: absolute;
+            bottom: auto;
+        }
+
+        .loader-container {
+            opacity: 1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(255, 255, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 1.5s ease-in-out forwards 3s;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+            animation: rotate 4.0s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(1turn);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInMoveLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles for the flip card */
+        .flip-card {
+            background-color: transparent;
+            width: 330px;
+            height: 480px;
+            perspective: 1000px;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;/
+        }
+
+        .front-image {
+            display: block;
+            margin: 0 auto;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            box-shadow: 0 8px 14px 0 rgba(0, 0, 0, 0.2);
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+
+        .flip-card-front {
+            /* Couleur de fond pour l'avant de la carte */
+            color: #ffffff;
+        }
+
+        .card1 .flip-card-front {
+            background-color: #050319;
+        }
+
+        .card2 .flip-card-front {
+            background-color: #1d0780;
+        }
+
+        .card3 .flip-card-front {
+            background-color: #0099ff;
+        }
+
+        .flip-card-back {
+            /* Dégradé pour le dos de la carte */
+            color: white;
+            /* Couleur du texte sur le dos de la carte (blanc dans cet exemple) */
+            transform: rotateY(180deg);
+            padding: 5px;
+            /* Ajoutez une marge interne */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card1 .flip-card-back {
+            background: linear-gradient(120deg, #1C1262 10%, #5A17D8 50%, #00EBEB 90%);
+        }
+
+        .card2 .flip-card-back {
+            background: linear-gradient(120deg, #df3551 10%, #f37d70 40%, #1d0780 90%);
+        }
+
+        .card3 .flip-card-back {
+            background: linear-gradient(120deg, #0099ff 20%, #5cff93 95%);
+        }
+
+        .card1 .flip-card-front,
+        .card1 .flip-card-back {
+            border: 1px solid #5A17D8;
+        }
+
+        .card2 .flip-card-front,
+        .card2 .flip-card-back {
+            border: 1px solid #8265ff;
+        }
+
+        .card3 .flip-card-front,
+        .card3 .flip-card-back {
+            border: 1px solid #84e4ff;
+        }
+
+        .card1 .back-image {
+            height: auto;
+            width: 100%;
+        }
+
+        .card1 .front-image {
+            height: auto;
+            width: 100%;
+        }
+
+        .card2 .back-image {
+            height: auto;
+            width: 80%;
+        }
+        
+        .card2 .front-image {
+            height: auto;
+            width: 50%;
+        }
+
+        .card3 .back-image {
+            height: auto;
+            width: 60%;
+        }
+        
+        .card3 .front-image {
+            height: auto;
+            width: 40%;
+        }
+
+
+        .card-container {
+            display: flex;
+        }
+
+        .flip-card {
+            padding: 40px
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans+Light&display=swap">
+</head>
+
+<body>
+    <div class="loader-container">
+        <!-- Pas de loader ici au début -->
+    </div>
+
+    <div id="canvas1">
+        <img class="img-principale" src="outline.png">
+    </div>
+
+    <div id="canvas2">
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        <div class="card-container">
+            <!-- Insérez la carte flip ici -->
+            <div class="flip-card">
+                <div class="flip-card-inner card1">
+                    <div class="flip-card-front">
+                        <img class="front-image" src="logo1.png" alt="Logo de la carte">
+                    </div>
+                    <div class="flip-card-back">
+                        <img class="back-image" src="Bot.gif" alt="GIF au dos de la carte">
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner card2">
+                    <div class="flip-card-front">
+                        <img class="front-image" src="magi.png" alt="Logo de la carte">
+                    </div>
+                    <div class="flip-card-back">
+                        <img class="back-image" src="tour.gif" alt="GIF au dos de la carte">
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner card3">
+                    <div class="flip-card-front">
+                        <img class="front-image" src="meowlogo.png" alt="Logo de la carte">
+                    </div>
+                    <div class="flip-card-back">
+                        <img class="back-image" src="meow.gif" alt="GIF au dos de la carte">
+                    </div>
+                </div>
+            </div>
+
+
+            <script>
+                // Attendre que la page soit complètement chargée
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Attendre 1 seconde avant d'afficher le loader
+                    setTimeout(function () {
+                        document.querySelector('.loader-container').innerHTML = '<div class="loader"></div>';
+                    }, 1000);
+
+                    setTimeout(function () {
+                        document.querySelector('.loader-container').style.display = 'none';
+                        document.getElementById('canvas1').style.display = 'flex';
+                        document.getElementById('canvas2').style.display = 'flex';
+
+                        // Ajoutez ici le code pour démarrer les animations d'image et de texte
+                    }, 6000); // 6 secondes au total pour le loader
+                });
+                var checkbox = document.querySelector('.switch input[type="checkbox"]');
+        var canvas2 = document.getElementById('canvas2');
+
+        // Fonction pour changer la couleur de fond
+        function changeBackgroundColor() {
+    if (checkbox.checked) {
+        // Définissez le fond avec la couleur de l'état "checked"
+        canvas2.style.backgroundImage = 'linear-gradient(to top right, #050319, #0099ff)';
+    } else {
+        // Définissez le fond avec la couleur de l'état "non checked"
+        canvas2.style.backgroundImage = 'linear-gradient(to top right, #050319, #5A17D8)';
+    }
+}
+
+
+        // Écoutez l'événement de changement sur la checkbox
+        checkbox.addEventListener('change', changeBackgroundColor);
+
+        // Appel initial pour définir la couleur de fond en fonction de l'état initial de la checkbox
+        changeBackgroundColor();
+</script>
+        
+            
+</body>
+
+</html>
