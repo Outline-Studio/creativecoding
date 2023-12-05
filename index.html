@@ -22,7 +22,22 @@
             align-items: center;
             min-height: 100vh;
             background: linear-gradient(to top right, #1C1262, #5A17D8);
+            position: relative;
         }
+        
+        .animated-png {
+    width: 400px; 
+    z-index: 0;
+    position: absolute;
+    top: 40%; /* Centre sur l'axe Y */
+    left: 70%; /* 80% sur l'axe X */
+    transform: translate(-50%, -50%); /* Centrer l'élément par rapport à sa propre taille */
+    opacity: 0; 
+    cursor: pointer;
+}
+
+
+
 
         #canvas2 {
             display: flex;
@@ -132,6 +147,7 @@
             will-change: transform, opacity;
             animation: fadeInUp 2s ease-in-out forwards, slideUp 3s ease-in-out forwards;
             animation-delay: 3s;
+            z-index: 2;
         }
 
 
@@ -367,6 +383,9 @@
 
     <div id="canvas1">
         <img class="img-principale" src="outline.png">
+        <img class="animated-png" src="rond1.png" id="rond1">
+        <img class="animated-png" src="rond2.png" id="rond2">
+        <img class="animated-png" src="rond3.png" id="rond3">
     </div>
 
     <div id="canvas2">
@@ -497,8 +516,37 @@
         });
     });
     </script>
-    
 
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const animatedElements = document.querySelectorAll('.animated-png');
+
+    // Fonction pour relancer l'animation de tous les éléments
+    function restartAllAnimations() {
+        animatedElements.forEach((element, index) => {
+            let delay = index * 0.8; // Chaque élément est décalé de 0.5 seconde
+
+            gsap.fromTo(element, 
+                { opacity: 0, x: "-170%", y: "0%" },
+                { opacity: 1, x: 0, y: 0, duration: 4, ease: "power3.inOut", delay: delay }
+            );
+        });
+    }
+
+    // Démarrer l'animation initiale après un délai
+    setTimeout(restartAllAnimations, 3500);
+
+    // Ajouter un gestionnaire de clic pour relancer l'animation de tous les éléments
+    animatedElements.forEach(element => {
+        element.addEventListener('click', restartAllAnimations);
+    });
+});
+
+
+
+
+
+</script>
 </body>
 
 </html>
